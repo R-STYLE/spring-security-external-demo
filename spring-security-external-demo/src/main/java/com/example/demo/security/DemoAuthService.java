@@ -30,7 +30,7 @@ public class DemoAuthService implements AuthenticationUserDetailsService<PreAuth
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("[token] " + ReflectionToStringBuilder.toString(token, ToStringStyle.JSON_STYLE));
 		}
-		if (this.delegate.isAuthorized(principal, credentials)) {
+		if (!this.delegate.isAuthorized(principal, credentials)) {
 			throw new UsernameNotFoundException("unknown user.");
 		}
 		final ExternalAuthenticated authenticated;

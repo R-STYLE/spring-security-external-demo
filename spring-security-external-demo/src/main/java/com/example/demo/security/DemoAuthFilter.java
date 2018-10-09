@@ -5,6 +5,8 @@ import java.lang.invoke.MethodHandles;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -20,6 +22,7 @@ public class DemoAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
 		final String principal = loadFromCookie(PRINCIPAL, request.getCookies());
 		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("[preauth][  principal] " + request.getRequestURI());
 			LOGGER.debug("[preauth][  principal] " + principal);
 		}
 		return principal;
@@ -40,7 +43,7 @@ public class DemoAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
 		}
 		for (Cookie cookie : cookies) {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("[preauth] cookie: " + cookie);
+				LOGGER.debug("[preauth] cookie: " + ReflectionToStringBuilder.toString(cookie, ToStringStyle.MULTI_LINE_STYLE));
 			}
 			if (name.equals(cookie.getName())) {
 				return cookie.getValue();

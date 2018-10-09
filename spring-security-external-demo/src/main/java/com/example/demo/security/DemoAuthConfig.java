@@ -20,7 +20,7 @@ public class DemoAuthConfig extends WebSecurityConfigurerAdapter {
 		http.addFilter(preAuthenticatedProcessingFilter());
 		http.authenticationProvider(preAuthenticatedAuthenticationProvider());
 		http.csrf().disable();
-		http.authorizeRequests().antMatchers("/").permitAll().anyRequest().authenticated();
+		http.authorizeRequests().antMatchers("/", "/css/**").permitAll().anyRequest().authenticated();
 	}
 
 	@Bean

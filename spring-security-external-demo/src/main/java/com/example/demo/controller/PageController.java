@@ -10,7 +10,6 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -27,15 +26,10 @@ public class PageController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-	@Autowired
-	BCryptPasswordEncoder principalEncoder;
-	@Autowired
-	Pbkdf2PasswordEncoder credentialsEncoder;
-
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public String index(HttpServletResponse res, Model model) {
-		res.addCookie(new Cookie("p", this.principalEncoder.encode("demo")));
-		res.addCookie(new Cookie("c", this.credentialsEncoder.encode("credentials")));
+		res.addCookie(new Cookie("p", new BCryptPasswordEncoder().encode("demo")));
+		res.addCookie(new Cookie("c", new Pbkdf2PasswordEncoder().encode("credentials")));
 		return "index";
 	}
 
