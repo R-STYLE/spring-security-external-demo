@@ -19,7 +19,8 @@ public class DemoAuthConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.addFilter(preAuthenticatedProcessingFilter());
 		http.authenticationProvider(preAuthenticatedAuthenticationProvider());
-		http.csrf().disable().authorizeRequests().antMatchers("/").permitAll().anyRequest().authenticated();
+		http.csrf().disable();
+		http.authorizeRequests().antMatchers("/").permitAll().anyRequest().authenticated();
 	}
 
 	@Bean

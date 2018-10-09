@@ -14,28 +14,36 @@ public class DemoAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private static final String PRINCIPAL = "p";
-	private static final String CREDENTIAL = "c";
+	private static final String CREDENTIALS = "c";
 
 	@Override
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-		LOGGER.info("test");
-		return loadFromCookie(PRINCIPAL, request.getCookies());
+		final String principal = loadFromCookie(PRINCIPAL, request.getCookies());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("[preauth][  principal] " + principal);
+		}
+		return principal;
 	}
 
 	@Override
 	protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
-		LOGGER.info("test");
-		return loadFromCookie(CREDENTIAL, request.getCookies());
+		final String credentials = loadFromCookie(CREDENTIALS, request.getCookies());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("[preauth][credentials] " + credentials);
+		}
+		return credentials;
 	}
 
 	public static String loadFromCookie(final String name, final Cookie[] cookies) {
 		if (cookies == null || cookies.length == 0) {
 			return null;
 		}
-		for (Cookie c : cookies) {
-			if (name.equals(c.getName())) {
-				LOGGER.info(c.getValue());
-				return c.getValue();
+		for (Cookie cookie : cookies) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("[preauth] cookie: " + cookie);
+			}
+			if (name.equals(cookie.getName())) {
+				return cookie.getValue();
 			}
 		}
 		return null;

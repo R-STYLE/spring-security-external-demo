@@ -19,11 +19,11 @@ public class ExternalAuthenticated {
 	public String getEmail() {
 		return email;
 	}
-	
+
 	public Integer getType() {
 		return type;
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -32,7 +32,7 @@ public class ExternalAuthenticated {
 		private String account;
 		private String email;
 		private Integer type;
-		
+
 		public Builder account(String account) {
 			this.account = account;
 			return this;
@@ -44,7 +44,7 @@ public class ExternalAuthenticated {
 		}
 
 		public Builder type(Integer type) {
-			this.type= type;
+			this.type = type;
 			return this;
 		}
 

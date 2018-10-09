@@ -27,7 +27,9 @@ public class DemoAuthService implements AuthenticationUserDetailsService<PreAuth
 
 		final Object principal = token.getPrincipal();
 		final Object credentials = token.getCredentials();
-		LOGGER.info("[token] " + ReflectionToStringBuilder.toString(token, ToStringStyle.JSON_STYLE));
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("[token] " + ReflectionToStringBuilder.toString(token, ToStringStyle.JSON_STYLE));
+		}
 		if (this.delegate.isAuthorized(principal, credentials)) {
 			throw new UsernameNotFoundException("unknown user.");
 		}
@@ -38,6 +40,7 @@ public class DemoAuthService implements AuthenticationUserDetailsService<PreAuth
 			throw new UsernameNotFoundException("authentication failed.");
 		}
 		return DemoUser.builder()
+				.principal(String.valueOf(principal))
 				.account(authenticated.getAccount())
 				.email(authenticated.getEmail())
 				.authorities(DemoRole.fromType(authenticated.getType()))

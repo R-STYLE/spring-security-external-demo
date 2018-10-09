@@ -10,7 +10,10 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +27,15 @@ public class PageController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+	@Autowired
+	BCryptPasswordEncoder principalEncoder;
+	@Autowired
+	Pbkdf2PasswordEncoder credentialsEncoder;
+
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public String index(HttpServletResponse res, Model model) {
-		res.addCookie(new Cookie("p", "name"));
-		res.addCookie(new Cookie("c", "credentials"));
+		res.addCookie(new Cookie("p", this.principalEncoder.encode("demo")));
+		res.addCookie(new Cookie("c", this.credentialsEncoder.encode("credentials")));
 		return "index";
 	}
 
@@ -35,10 +43,12 @@ public class PageController {
 	public String test(Principal principal, Model model) {
 		final Authentication authentication = (Authentication) principal;
 		final DemoUser user = (DemoUser) authentication.getPrincipal();
-		LOGGER.info("[user] " + ReflectionToStringBuilder.toString(user, ToStringStyle.JSON_STYLE));
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("[user] " + ReflectionToStringBuilder.toString(user, ToStringStyle.JSON_STYLE));
+		}
 		model.addAttribute("user", user);
 		model.addAttribute("isAdmin", DemoRole.isAdmin(user.getAuthorities()));
-		model.addAttribute("isOperator", DemoRole.isAdmin(user.getAuthorities()));
+		model.addAttribute("isOperator", DemoRole.isOperator(user.getAuthorities()));
 		return "test";
 	}
 }

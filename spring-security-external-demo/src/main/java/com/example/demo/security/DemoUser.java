@@ -9,14 +9,18 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.demo.auth.ExternalAuthenticated.Builder;
+
 public class DemoUser implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
+	private final String principal;
 	private final String account;
 	private final String email;
 	private final Set<GrantedAuthority> authorities;
 
 	private DemoUser(Builder builder) {
+		this.principal = builder.principal;
 		this.account = builder.account;
 		this.email = builder.email;
 		this.authorities = builder.authorities;
@@ -42,7 +46,8 @@ public class DemoUser implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return account;
+		// NOTE: preauth では getPreAuthenticatedPrincipal() の戻り値が String の場合、username.equals(principal) で認証済扱いとなる
+		return principal;
 	}
 
 	@Override
@@ -70,9 +75,15 @@ public class DemoUser implements UserDetails {
 	}
 
 	public static class Builder {
+		private String principal;
 		private String account;
 		private String email;
 		private Set<GrantedAuthority> authorities = new HashSet<>();
+
+		public Builder principal(String principal) {
+			this.principal = principal;
+			return this;
+		}
 
 		public Builder account(String account) {
 			this.account = account;
