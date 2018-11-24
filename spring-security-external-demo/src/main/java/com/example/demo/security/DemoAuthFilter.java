@@ -1,12 +1,15 @@
 package com.example.demo.security;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -37,14 +40,20 @@ public class DemoAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
 		return credentials;
 	}
 
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("request uri: " + ((HttpServletRequest) request).getRequestURI());
+		}
+		super.doFilter(request, response, chain);
+	}
+
 	public static String loadFromCookie(final String name, final Cookie[] cookies) {
 		if (cookies == null || cookies.length == 0) {
 			return null;
 		}
 		for (Cookie cookie : cookies) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("[preauth] cookie: " + ReflectionToStringBuilder.toString(cookie, ToStringStyle.MULTI_LINE_STYLE));
-			}
 			if (name.equals(cookie.getName())) {
 				return cookie.getValue();
 			}
